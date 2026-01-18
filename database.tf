@@ -11,6 +11,7 @@ resource "linode_database_mysql_v2" "database_1125" {
 
   lifecycle {
     ignore_changes = [allow_list]
+    prevent_destroy = true
   }
 
   depends_on = [

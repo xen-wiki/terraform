@@ -9,6 +9,10 @@ resource "linode_instance" "application_1125" {
     data.linode_sshkey.turtle.ssh_key
   ]
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   connection {
     type        = "ssh"
     user        = var.ssh_user
