@@ -1,4 +1,4 @@
-.PHONY: ssh-application help export-ips rsync-application
+.PHONY: ssh-application help export-ips rsync-application tunnel-application
 
 -include Makefile.env
 
@@ -9,6 +9,7 @@ help:
 	@echo "  make export-ips       - Get connection details from Terraform and configure Makefile.env"
 	@echo "  make ssh-application  - SSH to application host"
 	@echo "  make rsync-application SRC=<file> [DEST=<path>] - Copy files to/from application host"
+	@echo "  make tunnel-application - SSH tunnel to dev nginx (local 443 -> remote 8443)"
 
 export-ips:
 	@echo "Exporting IPs from Terraform state..."
@@ -30,3 +31,6 @@ rsync-application:
 	@DEST_PATH=$(if $(DEST),$(DEST),$(notdir $(SRC))); \
 	echo "Syncing $(SRC) to $(SSH_USER)@$(APPLICATION_IP):$$DEST_PATH..."; \
 	rsync -avz -e "ssh -p $(SSH_PORT)" $(SRC) $(SSH_USER)@$(APPLICATION_IP):$$DEST_PATH
+
+tunnel-application:
+	@sudo ssh -i ~/.ssh/id_rsa -N -L 443:localhost:8443 -p $(SSH_PORT) $(SSH_USER)@$(APPLICATION_IP)
